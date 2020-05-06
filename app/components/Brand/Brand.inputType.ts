@@ -1,9 +1,9 @@
 import { InputType, Field, ID } from 'type-graphql';
-import { Organization } from './Organization.entity';
+import { Brand } from './Brand.entity';
 import { ObjectId } from 'mongodb';
 
 @InputType()
-export class OrganizationCreateInput implements Partial<Organization> {
+export class BrandCreateInput implements Partial<Brand> {
   @Field()
   name: string;
   //
@@ -12,12 +12,13 @@ export class OrganizationCreateInput implements Partial<Organization> {
 }
 
 @InputType()
-export class OrganizationUpdateInput implements Partial<Organization> {
+export class BrandUpdateInput implements Partial<Brand> {
   @Field({ nullable: true })
   name: string;
 
   @Field(() => [ID], { nullable: true })
   managers: ObjectId[];
+
   // @Field({ nullable: true })
   // managers: ObjectId[];
 }

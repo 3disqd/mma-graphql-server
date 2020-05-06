@@ -5,11 +5,11 @@ import { buildSchema } from 'type-graphql';
 import { connect } from 'mongoose';
 import { CartResolver } from './components/Cart/Cart.resolver';
 import { UserResolver } from './components/User/User.resolver';
+import { BrandResolver } from './components/Brand/Brand.resolver';
 import { PointResolver } from './components/Point/Point.resolver';
 import { OrderResolver } from './components/Order/Order.resolver';
 import { ProductResolver } from './components/Product/Product.resolver';
 import { CategoriesResolver } from './components/Category/Category.resolver';
-import { OrganizationResolver } from './components/Organization/Organization.resolver';
 import { authChecker } from './auth-checker';
 import { Context, Token } from './types';
 import * as jwt from 'jsonwebtoken';
@@ -22,7 +22,7 @@ const main = async () => {
       UserResolver,
       CartResolver,
       OrderResolver,
-      OrganizationResolver,
+      BrandResolver,
       PointResolver,
     ],
     authChecker,

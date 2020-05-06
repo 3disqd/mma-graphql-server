@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Arg, Ctx, Authorized } from 'type-graphql';
 import { Point, PointModel } from './Point.entity';
 import { PointCreateInput } from './Point.inputType';
 import { Context } from '../../types';
-import { OrganizationModel } from '../Organization/Organization.entity';
+import { BrandModel } from '../Brand/Brand.entity';
 
 @Resolver((_of) => Point)
 export class PointResolver {
@@ -22,7 +22,7 @@ export class PointResolver {
   @Authorized()
   @Mutation(() => Point)
   async createPoint(
-    @Arg('organization_id') organization_id: string,
+    @Arg('brand_id') brand_id: string,
     @Arg('data')
     { name, address, schedule }: PointCreateInput,
     @Ctx() ctx: Context
@@ -30,14 +30,18 @@ export class PointResolver {
     const owner_id = ctx.user?.id;
     if (!owner_id) throw new Error('BadToken');
 
-    const organization = await OrganizationModel.findById(organization_id);
-    if (!organization) throw new Error('Organization not exist');
+    const brand = await BrandModel.findById(brand_id);
+    if (!brand) throw new Error('Brand not exist');
 
-    if (owner_id !== String(organization.owner_id))
+    if (owner_id !== String(brand.owner_id))
       throw new Error('Permission denied ');
 
     return (
-      await PointModel.create({ organization_id, name, address, schedule })
+      await PointModel.create({ brand_id, name, address, schedule })
     ).save();
   }
+
+  // TODO updatePoint
+
+  // TODO deletePoint
 }

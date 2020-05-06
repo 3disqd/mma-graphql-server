@@ -6,7 +6,7 @@ import {
 } from '@typegoose/typegoose';
 import { ObjectId } from 'mongodb';
 import { Ref } from '../../types';
-import { Organization } from '../Organization/Organization.entity';
+import { Brand } from '../Brand/Brand.entity';
 import { Schedule } from './Schedule.entity';
 
 @ObjectType({ description: 'The Point model' })
@@ -23,8 +23,8 @@ export class Point {
   address: string;
 
   @Field((_type) => ID)
-  @Property({ ref: Organization })
-  organization_id: Ref<Organization>;
+  @Property({ ref: Brand })
+  brand_id: Ref<Brand>;
   // _doc: any;
 
   @Field(() => Schedule, {nullable: true})

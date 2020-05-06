@@ -1,91 +1,51 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { Product, ProductModel } from './Product.entity';
-import { ProductCreateInput } from './Product.inputType';
-import { OrganizationModel } from '../Organization/Organization.entity';
-import find from 'lodash/find';
+import { ProductCreateInput, ProductUpdateInput } from './Product.inputType';
+import { Context } from '../../types';
 
 @Resolver((_of) => Product)
 export class ProductResolver {
   @Query((_returns) => Product, { nullable: false })
-  async returnSingleProduct(@Arg('id') id: string) {
-    // const organization = await OrganizationModel.findOne({
-    //   products: { $elemMatch: { _id: id } },
-    // });
-    const organization = await OrganizationModel.findOne({
-      'products._id': { $eq: id },
-      // 'products._id': id,
-    });
-    if (!organization) throw new Error('Organization not found');
-
-    return find(organization.products, { id });
+  async getProduct(@Arg('id') id: string) {
+    const product = await ProductModel.findById(id);
+    if (!product) throw new Error('Product not found');
+    return product;
   }
 
   @Query(() => [Product])
-  async getProducts(@Arg('organization_id') organization_id: string) {
-    const organization = await OrganizationModel.findById(organization_id);
-    if (!organization) throw new Error('Organization not found');
-
-    return organization.products;
+  async getBrandsProducts(@Arg('brand_id') brand_id: string) {
+    return ProductModel.find({ brand_id });
   }
 
   @Mutation(() => Product)
   async createProduct(
-    @Arg('organization_id') organization_id: string,
+    @Arg('brand_id') brand_id: string,
     @Arg('data')
     { name, description, price }: ProductCreateInput
   ): Promise<Product> {
-    const product = new ProductModel({
-      name,
-      description,
-      price,
-    });
-
-    console.log(product._id);
-    //
-    // const a = await OrganizationModel.find({ _id: organization_id });
-    const a = await OrganizationModel.find({
-      'products._id': { $eq: '5eb06df04af8990bd483f256' },
-    });
-    console.log(a);
-
-    const organization = await OrganizationModel.findByIdAndUpdate(
-      organization_id,
-      {
-        $push: {
-          products: product,
-        },
-      },
-      { new: true }
-    );
-
-    if (!organization) throw new Error('Organization not found');
-
-    return product;
+    return (
+      await ProductModel.create({ brand_id, name, description, price })
+    ).save();
   }
 
   @Mutation(() => Product)
   async updateProduct(
-    @Arg('organization_id') organization_id: string,
+    @Arg('id') id: string,
     @Arg('data')
-    { name, description, price }: ProductCreateInput
+    { name }: ProductUpdateInput,
+    @Ctx() ctx: Context
   ): Promise<Product> {
-    const product = new ProductModel({
-      name,
-      description,
-      price,
-    });
-
-    const organization = await OrganizationModel.findByIdAndUpdate(
-      organization_id,
+    const owner_id = ctx.user?.id;
+    if (!owner_id) throw new Error('BadToken');
+    const product = await ProductModel.findByIdAndUpdate(
+      id,
+      { name },
       {
-        $push: {
-          products: product,
-        },
-      },
-      { new: true }
+        new: true,
+      }
     );
 
-    if (!organization) throw new Error('Organization not found');
+    if (!product) throw new Error('Product not found');
 
     return product;
   }

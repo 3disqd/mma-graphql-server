@@ -1,8 +1,14 @@
-import { ObjectType, Field, ID, Float, Authorized, InputType } from 'type-graphql';
 import {
-  prop as Property,
-  getModelForClass,
-} from '@typegoose/typegoose';
+  ObjectType,
+  Field,
+  ID,
+  Float,
+  Authorized,
+  InputType,
+} from 'type-graphql';
+import { prop as Property, getModelForClass } from '@typegoose/typegoose';
+import { Brand } from '../Brand/Brand.entity';
+import { Ref } from '../../types';
 
 @ObjectType({ description: 'The Product model' })
 @InputType('ProductInput')
@@ -15,7 +21,7 @@ export class Product {
   @Property()
   name: String;
 
-  @Authorized('ADMIN', 'MODERATOR')
+  // @Authorized('ADMIN', 'MODERATOR')
   @Field()
   @Property()
   description: String;
@@ -24,6 +30,9 @@ export class Product {
   @Property()
   price: number;
 
+  @Field((_type) => ID)
+  @Property({ ref: Brand })
+  brand_id: Ref<Brand>;
 }
 
 export const ProductModel = getModelForClass(Product);
