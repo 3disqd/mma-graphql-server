@@ -1,6 +1,9 @@
 import { Resolver, Query, Mutation, Arg, Ctx, Authorized } from 'type-graphql';
 import { Organization, OrganizationModel } from './Organization.entity';
-import { OrganizationCreateInput } from './Organization.inputType';
+import {
+  OrganizationCreateInput,
+  OrganizationUpdateInput,
+} from './Organization.inputType';
 import { Context } from '../../types';
 
 @Resolver((_of) => Organization)
@@ -35,13 +38,19 @@ export class OrganizationResolver {
   @Mutation(() => Organization)
   async updateOrganization(
     @Arg('id') id: string,
+    @Arg('data')
+    { name, managers }: OrganizationUpdateInput,
     @Ctx() ctx: Context
   ): Promise<Organization> {
-    // console.log('=====');
     const owner_id = ctx.user?.id;
     if (!owner_id) throw new Error('BadToken');
-
-    const organization = await OrganizationModel.findById(id);
+    const organization = await OrganizationModel.findByIdAndUpdate(
+      id,
+      { name, managers },
+      {
+        new: true,
+      }
+    );
 
     if (!organization) throw new Error('Organization not found');
 

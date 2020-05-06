@@ -5,6 +5,7 @@ import { buildSchema } from 'type-graphql';
 import { connect } from 'mongoose';
 import { CartResolver } from './components/Cart/Cart.resolver';
 import { UserResolver } from './components/User/User.resolver';
+import { PointResolver } from './components/Point/Point.resolver';
 import { OrderResolver } from './components/Order/Order.resolver';
 import { ProductResolver } from './components/Product/Product.resolver';
 import { CategoriesResolver } from './components/Category/Category.resolver';
@@ -22,6 +23,7 @@ const main = async () => {
       CartResolver,
       OrderResolver,
       OrganizationResolver,
+      PointResolver,
     ],
     authChecker,
     emitSchemaFile: true,

@@ -7,7 +7,7 @@ import {
 import { ObjectId } from 'mongodb';
 import { User } from '../User/User.entity';
 import { Ref } from '../../types';
-
+import { Product } from '../Product/Product.entity';
 
 @ObjectType({ description: 'The Organization model' })
 export class Organization {
@@ -24,9 +24,12 @@ export class Organization {
   // _doc: any;
 
   @Field(() => [ID])
-  @ArrayProperty({ items: User, default: [] })
+  @ArrayProperty({ items: ObjectId, default: [] })
   managers: Ref<User>[];
 
+  @Field(() => Product)
+  @ArrayProperty({ items: Product, default: [] })
+  products: Ref<Product>[];
 }
 
 export const OrganizationModel = getModelForClass(Organization);

@@ -1,11 +1,12 @@
-import { ObjectType, Field, ID, Int, Authorized } from "type-graphql";
-import { prop as Property, getModelForClass } from "@typegoose/typegoose";
-import { Ref } from "../../types";
-import { Categories } from "../Category/Category.entity";
+import { ObjectType, Field, ID, Float, Authorized, InputType } from 'type-graphql';
+import {
+  prop as Property,
+  getModelForClass,
+} from '@typegoose/typegoose';
 
-
-@ObjectType({ description: "The Product model" })
-export  class Product {
+@ObjectType({ description: 'The Product model' })
+@InputType('ProductInput')
+export class Product {
   @Authorized()
   @Field(() => ID)
   id: String;
@@ -14,31 +15,15 @@ export  class Product {
   @Property()
   name: String;
 
-  @Authorized("ADMIN", "MODERATOR")
+  @Authorized('ADMIN', 'MODERATOR')
   @Field()
   @Property()
   description: String;
 
-  @Field()
-  @Property()
-  color: String;
-
-  @Field(_type => Int)
-  @Property()
-  stock: number;
-
-  @Field(_type => Int)
+  @Field((_type) => Float)
   @Property()
   price: number;
 
-  @Field(_type => String)
-  @Property({ref: Categories})
-  category_id: Ref<Categories>;
-  _doc: any;
-
 }
 
-
 export const ProductModel = getModelForClass(Product);
-
-
